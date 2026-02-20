@@ -11,7 +11,6 @@ T = 100.0 # Ejemplo a 100°C
 if T <= 0:
     resistencia = R0 * (1 + A * T + B * T**2)
 else:
-    C = -4.183e-12
     resistencia = R0 * (1 + A * T + B * T**2 + C * (T - 100) * T**3)
 
 print("--- 4. PT100 💍--- \n") 
