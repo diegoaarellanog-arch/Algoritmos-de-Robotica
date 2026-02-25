@@ -6,13 +6,13 @@ opc = input('Robots disponibles: \n1. Robot Cilindrico \n2. Robot Cartesiano \n3
 
 while True:
     if opc == '1':
-        print('Robot Cilíndrico seleccionado')
+        print("Robot Cilíndrico seleccionado\n3 grados de libertad: 2 prismaticos y 1 rotacional")
         break
     elif opc == '2':
-        print('Robot Cartesiano seleccionado')
+        print('Robot Cartesiano seleccionado\n3 grados de libertad: 3 prismaticos')
         break
     elif opc == '3':
-        print('Robot Esférico seleccionado')
+        print('Robot Esférico seleccionado\n3 grados de libertad: 2 rotacionales y 1 prismatico')
         break
     else:
         opc = input('Opción no válida, por favor seleccione una opción del 1 al 3\n >> ')
