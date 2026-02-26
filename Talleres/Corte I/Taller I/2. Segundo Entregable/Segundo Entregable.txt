@@ -1,6 +1,0 @@
-Link:	https://github.com/diegoaarellanog-arch/Algoritmos-de-Robotica/tree/main/Talleres/Corte%20I/Taller%20I/2.%20Segundo%20Entregable
-Integrantes:
-	• Arellano Gutierrez Diego Alejandro 
-	• Carrillo Juan Esteban
-	• Fajardo Malagon Jean Pierre Steven 
-	• Rodriguez Hernandez Marlly Johana
