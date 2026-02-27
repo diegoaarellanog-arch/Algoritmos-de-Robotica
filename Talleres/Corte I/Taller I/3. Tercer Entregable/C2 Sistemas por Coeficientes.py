@@ -1,54 +1,36 @@
-# 2. Realice un programa que le permita al usuario ingresar los coeficientes de una función de transferencia de 
-# segundo orden y graficar su comportamiento, además se debe mostrar que tipo de sistema es: subamortiguado, criticamente
-# amortiguado y sobreamortiguado.
-
-# -------- Librerías --------
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
 
-# -------- Configuración --------
-np.set_printoptions(precision=4, suppress=True)
+# --------- Entrada de datos ---------
+zeta = float(input("Ingrese el factor de amortiguamiento (ζ): "))
+wn = float(input("Ingrese la frecuencia natural (ωn): "))
+K = float(input("Ingrese la ganancia (K): "))
 
-# -------- Entrada de datos --------
-print("Sistema de Segundo Orden")
-b0 = float(input("Ingrese b0 (numerador): "))
+# --------- Función de transferencia ---------
+num = [K * wn**2]
+den = [1, 2*zeta*wn, wn**2]
 
-a2 = float(input("Ingrese a2: "))
-a1 = float(input("Ingrese a1: "))
-a0 = float(input("Ingrese a0: "))
+system = signal.TransferFunction(num, den)
 
-# -------- Cálculo parámetros dinámicos --------
-wn = np.sqrt(a0 / a2)
-zeta = a1 / (2 * np.sqrt(a0 * a2))
+# --------- Respuesta al escalón ---------
+t, y = signal.step(system)
 
-# -------- Clasificación --------
+# --------- Clasificación del sistema ---------
 if zeta < 1:
     tipo = "Subamortiguado"
-elif np.isclose(zeta, 1):
+elif zeta == 1:
     tipo = "Críticamente amortiguado"
 else:
     tipo = "Sobreamortiguado"
 
-# -------- Sistema --------
-num = [b0]
-den = [a2, a1, a0]
-
-sistema = signal.TransferFunction(num, den)
-
-# -------- Respuesta al escalón --------
-t, y = signal.step(sistema)
-
-# -------- Gráfica --------
+# --------- Gráfica ---------
 plt.figure()
 plt.plot(t, y)
-plt.title(f"Respuesta al Escalón\nTipo: {tipo}")
-plt.xlabel("Tiempo (s)")
-plt.ylabel("Respuesta")
-plt.grid(True)
+plt.title(f"Respuesta al escalón\nSistema {tipo}")
+plt.xlabel("Tiempo")
+plt.ylabel("Salida")
+plt.grid()
 plt.show()
 
-# -------- Resultados --------
-print("\nFrecuencia natural (wn):", round(wn,4))
-print("Factor de amortiguamiento (zeta):", round(zeta,4))
-print("Tipo de sistema:", tipo)
+print("\nTipo de sistema:", tipo)
