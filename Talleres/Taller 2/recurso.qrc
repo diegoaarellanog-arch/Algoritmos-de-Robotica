@@ -1,0 +1,6 @@
+<RCC>
+  <qresource prefix="img">
+    <file>UNIVERSIDAD_ECCI.png</file>
+    <file>logo-blanco-ecci.webp</file>
+  </qresource>
+</RCC>
