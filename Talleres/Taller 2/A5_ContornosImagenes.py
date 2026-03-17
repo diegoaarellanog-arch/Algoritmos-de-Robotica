@@ -9,7 +9,10 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
+from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtGui import QPixmap
+import cv2
+import numpy as np
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -51,12 +54,28 @@ class Ui_MainWindow(object):
         font.setPointSize(9)
         self.label_5.setFont(font)
         self.label_5.setObjectName("label_5")
+        self.label_6 = QtWidgets.QLabel(self.centralwidget)
+        self.label_6.setGeometry(QtCore.QRect(340, 90, 311, 221))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.label_6.setFont(font)
+        self.label_6.setText("")
+        self.label_6.setObjectName("label_6")
+        self.label_7 = QtWidgets.QLabel(self.centralwidget)
+        self.label_7.setGeometry(QtCore.QRect(10, 90, 311, 221))
+        font = QtGui.QFont()
+        font.setPointSize(9)
+        self.label_7.setFont(font)
+        self.label_7.setText("")
+        self.label_7.setObjectName("label_7")
         self.label_2.raise_()
         self.label.raise_()
         self.pushButton.raise_()
         self.label_3.raise_()
         self.label_4.raise_()
         self.label_5.raise_()
+        self.label_6.raise_()
+        self.label_7.raise_()
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 662, 21))
@@ -68,6 +87,31 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+        self.pushButton.clicked.connect(self.cargarImagen)
+
+    def cargarImagen(self):
+        # Abrir un cuadro de diálogo para seleccionar una imagen
+        options = QFileDialog.Options()
+        fileName, _ = QFileDialog.getOpenFileName(None, "Seleccionar Imagen", "", "Archivos de Imagen (*.png *.jpg *.bmp)", options=options)
+        if fileName:
+            # Cargar la imagen usando OpenCV
+            image = cv2.imread(fileName)
+            # Convertir la imagen a escala de grises
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            # Aplicar un umbral para obtener una imagen binaria
+            _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+            # Encontrar los contornos en la imagen binaria
+            contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            # Dibujar los contornos en la imagen original
+            cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+            # Convertir la imagen a formato RGB para mostrarla en QLabel
+            image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            height, width, channel = image_rgb.shape
+            bytesPerLine = 3 * width
+            qImg = QtGui.QImage(image_rgb.data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
+            pixmap = QPixmap.fromImage(qImg)
+            self.label_6.setPixmap(pixmap.scaled(self.label_6.size(), QtCore.Qt.KeepAspectRatio))
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
