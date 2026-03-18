@@ -87,31 +87,78 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+## ------------------------------------------------------------------------------------------------------------------------------------
+## ------------------------------------------------------------------------------------------------------------------------------------
         self.pushButton.clicked.connect(self.cargarImagen)
 
     def cargarImagen(self):
         # Abrir un cuadro de diálogo para seleccionar una imagen
         options = QFileDialog.Options()
         fileName, _ = QFileDialog.getOpenFileName(None, "Seleccionar Imagen", "", "Archivos de Imagen (*.png *.jpg *.bmp)", options=options)
+        
         if fileName:
-            # Cargar la imagen usando OpenCV
-            image = cv2.imread(fileName)
+            # Cargar la iamgen usando OpenCV
+            img = cv2.imread(fileName, cv2.IMREAD_UNCHANGED)
+            
+            if img is None:
+                print(f"Error: No se pudo leer {fileName}")
+                return
+            
+            # Convertir de BGR (OpenCV) a RGBA (Qt)
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+            
+            # Obtener dimensiones y calcular bytes por línea
+            alto, ancho, canales = img_rgb.shape
+            bytes_por_linea = canales * ancho
+
+            # Convertir a formato QImage para que Qt la entienda    
+            q_img1 = QtGui.QImage(img_rgb.data, ancho, alto, bytes_por_linea, QtGui.QImage.Format_RGBA8888)
+            pixmap_img1 = QPixmap.fromImage(q_img1)
+
+            self.label_7.setPixmap(pixmap_img1.scaled(self.label_7.size(), QtCore.Qt.KeepAspectRatio))
+
+            # 1. Convertir a Gris (esto genera 1 solo canal)
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+            # 2. Obtener nuevas dimensiones
+            alto, ancho = gray.shape # Nota: 'gray' no tiene el valor 'canales' en shape
+            bytes_por_linea_gris = ancho # En gris, 1 píxel = 1 byte, así que bytes = ancho
+
+            # 3. Crear QImage con el formato de GRIS (Format_Grayscale8)
+            q_img2 = QtGui.QImage(
+                gray.data, 
+                ancho, 
+                alto, 
+                bytes_por_linea_gris, 
+                QtGui.QImage.Format_Grayscale8
+            )
+
+            # 4. Mostrar en el Label
+            pixmap_img2 = QPixmap.fromImage(q_img2)
+            self.label_6.setPixmap(pixmap_img2.scaled(self.label_6.size(), QtCore.Qt.KeepAspectRatio))
+            
             # Convertir la imagen a escala de grises
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            # Aplicar un umbral para obtener una imagen binaria
-            _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
-            # Encontrar los contornos en la imagen binaria
-            contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-            # Dibujar los contornos en la imagen original
-            cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
-            # Convertir la imagen a formato RGB para mostrarla en QLabel
-            image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            height, width, channel = image_rgb.shape
-            bytesPerLine = 3 * width
-            qImg = QtGui.QImage(image_rgb.data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
-            pixmap = QPixmap.fromImage(qImg)
-            self.label_6.setPixmap(pixmap.scaled(self.label_6.size(), QtCore.Qt.KeepAspectRatio))
+            # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            
+            # # Aplicar un umbral para obtener una imagen binaria
+            # _, thresh = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+            
+            # # Encontrar los contornos en la imagen binaria
+            # contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            
+            # # Dibujar los contornos en la imagen original
+            # cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+            
+            # # Convertir la imagen a formato RGB para mostrarla en QLabel
+            # image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            # height, width, channel = image_rgb.shape
+            # bytesPerLine = 3 * width
+            # qImg = QtGui.QImage(image_rgb.data, width, height, bytesPerLine, QtGui.QImage.Format_RGB888)
+            # pixmap = QPixmap.fromImage(qImg)
+            # self.label_6.setPixmap(pixmap.scaled(self.label_6.size(), QtCore.Qt.KeepAspectRatio))
+
+## ------------------------------------------------------------------------------------------------------------------------------------
+## ------------------------------------------------------------------------------------------------------------------------------------
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
