@@ -9,8 +9,6 @@ l3 = 2.5
 
 q1 = 0
 q2 = 0
-q3 = 0
-q4 = 0
 
 R = []
 R.append(RevoluteDH(d=h1, alpha=0, a=0, offset=0, qlim=[0, math.pi]))
