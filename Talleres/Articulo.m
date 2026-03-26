@@ -11,11 +11,10 @@ q1 = 0;
 q2 = 0;
 q3 = 0;
 
-R(1) = Link('prismatic','theta',0,'alpha',0,'a',0,'offset',l1);
-R(1).qlim = [0,10];
-R(2) = Link('prismatic','theta',-pi/2,'alpha',-pi/2,'a',0,'offset',0);
-R(2).qlim = [0,10];
-R(3) = Link('prismatic','theta',-pi/2,'alpha',-pi/2,'a',0,'offset',l2);
+R(1) = Link('revolute','d',0,'alpha',0,'a',l2,'offset',0);
+R(2) = Link('revolute','d',0,'alpha',pi,'a',l3,'offset',0);
+R(3) = Link('prismatic','theta',0,'alpha',0 ...
+    va,'a',0,'offset',l4);
 R(3).qlim = [0,10];
 
 
