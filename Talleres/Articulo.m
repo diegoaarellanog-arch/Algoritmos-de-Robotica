@@ -14,11 +14,11 @@ q3 = 0;
 R(1) = Link('revolute','d',0,'alpha',0,'a',l2,'offset',0);
 R(2) = Link('revolute','d',0,'alpha',pi,'a',l3,'offset',0);
 R(3) = Link('prismatic','theta',0,'alpha',0 ...
-    va,'a',0,'offset',l4);
+    ,'a',0,'offset',l4);
 R(3).qlim = [0,10];
 
 
-Robot = SerialLink(R,'name','Bender')
+Robot = SerialLink(R,'name','Esferico')
 
 Robot.plot([q1,q2, q3],'scale',1.0,'workspace',[-30 30 -30 30 -30 30]);
 zlim([-15,30]);

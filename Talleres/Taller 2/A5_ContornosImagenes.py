@@ -104,37 +104,93 @@ class Ui_MainWindow(object):
                 print(f"Error: No se pudo leer {fileName}")
                 return
             
-            # Convertir de BGR (OpenCV) a RGBA (Qt)
-            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA)
+            # Imagen pre-procesada para mostrar en QLabel (sin contornos)
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGBA) # Convertir de BGR (OpenCV) a RGBA (Qt)
             
-            # Obtener dimensiones y calcular bytes por línea
-            alto, ancho, canales = img_rgb.shape
+            alto, ancho, canales = img_rgb.shape # Obtener dimensiones y calcular bytes por línea
             bytes_por_linea = canales * ancho
-
-            # Convertir a formato QImage para que Qt la entienda    
-            q_img1 = QtGui.QImage(img_rgb.data, ancho, alto, bytes_por_linea, QtGui.QImage.Format_RGBA8888)
+    
+            q_img1 = QtGui.QImage(img_rgb.data, ancho, alto, bytes_por_linea, QtGui.QImage.Format_RGBA8888) # Convertir a formato QImage para que Qt la entienda
             pixmap_img1 = QPixmap.fromImage(q_img1)
 
             self.label_7.setPixmap(pixmap_img1.scaled(self.label_7.size(), QtCore.Qt.KeepAspectRatio))
 
-            # 1. Convertir a Gris (esto genera 1 solo canal)
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            # Coordenadas para guardar la imagen con contornos
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # Convertir a escala de grises
+            
+            blur = cv2.medianBlur(gray, 3)
+            _, thresh = cv2.threshold(blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+            
+            # En lugar de dilate, usamos MORPH_CLOSE con un kernel pequeño
+            # Esto une puntos cercanos pero intenta mantener el grosor original
+            kernel = np.ones((3,3), np.uint8)
+            thresh = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
-            # 2. Obtener nuevas dimensiones
-            alto, ancho = gray.shape # Nota: 'gray' no tiene el valor 'canales' en shape
-            bytes_por_linea_gris = ancho # En gris, 1 píxel = 1 byte, así que bytes = ancho
+            contornos, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE) # Extracción de contornos (CHAIN_APPROX_NONE para tener todos los puntos)
+            contornos, _ = cv2.findContours(thresh, cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
+            # Creamos el lienzo y las listas de puntos vacías
+            lienzo = np.zeros((alto, ancho), dtype=np.uint8)
+            puntos_totales = []
 
-            # 3. Crear QImage con el formato de GRIS (Format_Grayscale8)
-            q_img2 = QtGui.QImage(
-                gray.data, 
-                ancho, 
-                alto, 
-                bytes_por_linea_gris, 
-                QtGui.QImage.Format_Grayscale8
-            )
+            for cnt in contornos:
+                # Solo procesamos contornos con un área mínima (filtra ruido)
+                if cv2.contourArea(cnt) > 20: 
+                    # 1. Dibujar este contorno en el lienzo
+                    cv2.drawContours(lienzo, [cnt], -1, (255), 2)
+                    
+                    # 2. Extraer puntos y acumularlos
+                    pts = cnt.reshape(-1, 2)
+                    puntos_totales.append(pts)
 
-            # 4. Mostrar en el Label
+            # --- CONSOLIDAR PUNTOS X, Y ---
+            if puntos_totales:
+                # Unimos todos los fragmentos (cuerpo + patas + detalles) en un solo array
+                todas_las_coords = np.vstack(puntos_totales)
+                self.x = todas_las_coords[:, 0]
+                self.y = todas_las_coords[:, 1]
+                print(f"Total de puntos extraídos: {len(self.x)}")
+            else:
+                print("No se encontraron contornos válidos.")
+                return
+
+
+
+
+
+
+
+
+
+
+
+            
+            # if not contornos:
+            #     return None, None, None
+            
+            # cnt = max(contornos, key=cv2.contourArea)
+            # puntos = cnt.reshape(-1, 2)
+            # x = puntos[:, 0]
+            # y = puntos[:, 1]
+
+
+            # # Guardar la imagen con contornos dibujados
+            # lienzo = np.zeros((alto, ancho), dtype=np.uint8) # Crear un lienzo negro del tamaño de la imagen original
+            
+            # puntos_reshaped = puntos.reshape((-1, 1, 2)).astype(np.int32) # Resonformar los puntos al formato que espera OpenCV: (n_puntos, 1, 2)
+            
+            # cv2.drawContours(lienzo, [puntos_reshaped], -1, (255), 2) # Dibujar el contorno (el -1 indica que dibuje todos, el 255 es color blanco, 2 es grosor)
+              
+              
+
+            # Presentar imagen con contornos
+            lienzo_rgb = cv2.cvtColor(lienzo, cv2.COLOR_GRAY2RGBA) # Conver
+            
+            alto, ancho, canales = lienzo_rgb.shape # Obtener dimensiones y calcular bytes por línea
+            bytes_por_linea = canales * ancho
+    
+            q_img2 = QtGui.QImage(lienzo_rgb.data, ancho, alto, bytes_por_linea, QtGui.QImage.Format_RGBA8888) # Convertir a formato QImage para que Qt la entienda
             pixmap_img2 = QPixmap.fromImage(q_img2)
+
             self.label_6.setPixmap(pixmap_img2.scaled(self.label_6.size(), QtCore.Qt.KeepAspectRatio))
             
             # Convertir la imagen a escala de grises

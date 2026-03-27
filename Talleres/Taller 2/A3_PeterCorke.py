@@ -18,14 +18,14 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.label = QtWidgets.QLabel(self.centralwidget)
-        self.label.setGeometry(QtCore.QRect(0, 20, 661, 71))
+        self.label.setGeometry(QtCore.QRect(0, 20, 330, 71))
         font = QtGui.QFont()
         font.setPointSize(15)
         self.label.setFont(font)
         self.label.setAlignment(QtCore.Qt.AlignCenter)
         self.label.setObjectName("label")
         self.label_2 = QtWidgets.QLabel(self.centralwidget)
-        self.label_2.setGeometry(QtCore.QRect(331, 370, 331, 61))
+        self.label_2.setGeometry(QtCore.QRect(20, 300, 331, 61))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.label_2.setFont(font)
@@ -43,7 +43,7 @@ class Ui_MainWindow(object):
         self.label_4.setFont(font)
         self.label_4.setObjectName("label_4")
         self.label_5 = QtWidgets.QLabel(self.centralwidget)
-        self.label_5.setGeometry(QtCore.QRect(280, 100, 361, 20))
+        self.label_5.setGeometry(QtCore.QRect(20, 130, 361, 20))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.label_5.setFont(font)
@@ -56,7 +56,7 @@ class Ui_MainWindow(object):
         self.comboBox.addItem("")
         self.comboBox.addItem("")
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
-        self.label_6.setGeometry(QtCore.QRect(20, 140, 621, 211))
+        self.label_6.setGeometry(QtCore.QRect(331, 20, 330, 422))
         font = QtGui.QFont()
         font.setPointSize(9)
         self.label_6.setFont(font)
@@ -85,14 +85,22 @@ class Ui_MainWindow(object):
         self.comboBox.currentIndexChanged.connect(self.mostrar_diagrama)
 
     def mostrar_diagrama(self):
+        pixmap = QtGui.QPixmap()
+        
         if self.comboBox.currentIndex() == 1:  # Cartesiano
-            self.label_6.setPixmap(QtGui.QPixmap(":/img/cartesiano.png"))
+            pixmap.load("C:\\Users\\tato2\\Documents\\Universidad\\Algoritmos-de-Robotica\\Talleres\\Taller 2\\img\\Cartesiano.png")
+            self.label_6.setPixmap(pixmap.scaled(
+                self.label_6.width(), 
+                self.label_6.height(), 
+                QtCore.Qt.KeepAspectRatio, 
+                QtCore.Qt.SmoothTransformation
+            ))
             self.label_5.setText("Articulaciones: 3 (PPP)")
         elif self.comboBox.currentIndex() == 2:  # Esférico
-            self.label_6.setPixmap(QtGui.QPixmap(":/img/esferico.png"))
+            self.label_6.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage("img/Esferico.png")))
             self.label_5.setText("Articulaciones: 3 (RRP)")
         elif self.comboBox.currentIndex() == 3:  # Cilíndrico
-            self.label_6.setPixmap(QtGui.QPixmap(":/img/cilindrico.png"))
+            self.label_6.setPixmap(QtGui.QPixmap.fromImage(QtGui.QImage("img/Cilindrico.png")))
             self.label_5.setText("Articulaciones: 3 (RPP)")
 
     def retranslateUi(self, MainWindow):
