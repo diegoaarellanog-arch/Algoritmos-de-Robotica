@@ -1,4 +1,4 @@
-#sudo raspi-config -*- coding: utf-8 -*-  wvkbd-mobintl
+#sudo raspi-config -*- coding: utf-8 -*-  wvkbd-mobintl    gkbd-keyboard-display     onboard
 
 import matplotlib
 matplotlib.use('Qt5Agg')
