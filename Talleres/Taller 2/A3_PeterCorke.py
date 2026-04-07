@@ -1,4 +1,4 @@
-#echo $XDG_SESSION_TYPE -*- coding: utf-8 -*-
+#sudo raspi-config -*- coding: utf-8 -*-
 
 import matplotlib
 matplotlib.use('Qt5Agg')
