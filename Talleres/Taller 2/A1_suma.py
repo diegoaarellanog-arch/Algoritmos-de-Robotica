@@ -1681,7 +1681,7 @@ class Ui_MainWindow(object):
         self.label_10.setFont(font)
         self.label_10.setObjectName("label_10")
         self.label_6 = QtWidgets.QLabel(self.centralwidget)
-        self.label_6.setGeometry(QtCore.QRect(200, 660, 431, 241))
+        self.label_6.setGeometry(QtCore.QRect(500, 540, 431, 241))
         self.label_6.setObjectName("label_6")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
