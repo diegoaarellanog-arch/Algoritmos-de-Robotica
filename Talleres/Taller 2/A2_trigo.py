@@ -19,7 +19,7 @@ import mar_rc
 class CanvasGrafico(FigureCanvas):
     def __init__(self, parent=None):
         # Crear la figura y el objeto axes (subplot)
-        self.fig = Figure(figsize=(5, 4), dpi=100)
+        self.fig = Figure(figsize=(5, 4), dpi=76)
         self.axes = self.fig.add_subplot(111)
         super(CanvasGrafico, self).__init__(self.fig)
         self.setParent(parent)
@@ -387,7 +387,7 @@ class Ui_MainWindow(object):
         self.label_6.setGeometry(QtCore.QRect(540, 520, 431, 121))
         self.label_6.setObjectName("label_6")
         self.label_11 = QtWidgets.QLabel(self.centralwidget)
-        self.label_11.setGeometry(QtCore.QRect(190, 230, 481, 281))
+        self.label_11.setGeometry(QtCore.QRect(80, 210, 591, 311))
         palette = QtGui.QPalette()
         brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
         brush.setStyle(QtCore.Qt.SolidPattern)
@@ -622,6 +622,10 @@ class Ui_MainWindow(object):
             # Dibujar en el objeto Axes
             self.canvas.axes.clear()
             self.canvas.axes.plot(x, y, color='blue', label=seleccion)
+            # --- AGREGAR TÍTULOS A LOS EJES ---
+            self.canvas.axes.set_title(f"Gráfica de {seleccion}")
+            self.canvas.axes.set_xlabel("Eje X (Radianes)") # Título eje horizontal
+            self.canvas.axes.set_ylabel("Eje Y (Amplitud)") # Título eje vertical
             self.canvas.axes.set_title(f"Gráfica de {seleccion}")
             self.canvas.axes.grid(True)
             self.canvas.axes.legend()
